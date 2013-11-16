@@ -18,10 +18,10 @@ import voldemort.utils.ByteArray;
 public class Rmet4 {
 	public static void main(String[] args) {
 		String host = "astest-mon1.dev.sea1.csh.tc";
+		String storeName = "Account_Store";
 		
 		//RME Testing
         String bootStrapUrl = "tcp://"+host+":6666";
-        String storeName = "Account_Store"; 
         int maxThreads = 300;
         ClientConfig clientConfig = new ClientConfig();
         clientConfig.setMaxThreads(maxThreads);
@@ -41,19 +41,20 @@ public class Rmet4 {
         AdminClient adminClient = new AdminClient(bootStrapUrl, new AdminClientConfig());
         VoldemortFilter vf =  new DefaultVoldemortFilter();
         Iterator<ByteArray> iterator = adminClient.bulkFetchOps.fetchKeys(nodeId, storeName, partitionList, vf, true);
-        /////////////////above is vdm conneciton information
+        /////////////////above is vdm connection information
        
         String key = null;
         String value = null;
         //Versioned value = null;
         
-        //StringBuilder sb = new StringBuilder(); 		//records processing
-        StringBuilder sb_nh = new StringBuilder(); 	//records skip
+        //StringBuilder sb = new StringBuilder(); 		//records processed
+        StringBuilder sb_nh = new StringBuilder(); 	//records skiped
         
         String strBirthDateNo = null;//get DateOfBirth form VDM, string
         Long LnEpoBDOld = null;		//get DateOfBirth form VDM, long
-		String strBirthYear = null; //get YearOfBirth form VDM    
 		String strProperty = null;  //get Property form VDM
+		String strBirthYear = null; //get YearOfBirth form VDM    
+
        
 		String strNYear = null;  	//generate new YearOfBirth to VDM
 		
@@ -62,63 +63,54 @@ public class Rmet4 {
         while (iterator.hasNext()) {
             key = new String(iterator.next().get());
             value = client.getValue(key);
-            strBirthDateNo = null; //default
-            strProperty = null;	  //default
-            strBirthYear = null;	  //default
+            strBirthDateNo = null; //default, reset in every loop
+            strProperty = null;	  //default, reset in every loop
+            strBirthYear = null;	  //default, reset in every loop
             JSONObject myjson = null;
             
             try {
             		myjson = new JSONObject(value);
                 try{
             			strBirthDateNo = myjson.getString("DateOfBirth");
-            			System.out.println("Birthday String--> " + strBirthDateNo);
+            			//System.out.println("Birthday String--> " + strBirthDateNo);
                 }	catch(JSONException e){}
                 	
                 try{
                 		strProperty = myjson.getString("Property"); 	
-                		System.out.println("strProperty String--> " + strProperty);
+                		//System.out.println("strProperty String--> " + strProperty);
 	            }	catch(JSONException e){} 
             
                 try{
 	                	strBirthYear = myjson.getString("YearOfBirth"); 	
-	                	System.out.println("strBirthYear String--> " + strBirthYear);
-                }	catch(JSONException e){} 
-                
-                
-                
-            } catch (JSONException e) {
-            		//e.printStackTrace();
-            		//System.out.println("Birthday String--> " + strBirthDateNo);
-            		//System.out.println("strProperty String--> " + strProperty);
-            }
+	                	//System.out.println("strBirthYear String--> " + strBirthYear);
+                }	catch(JSONException e){}               
+            } catch (JSONException e) {}
    
 			if (strBirthDateNo!=null && strBirthDateNo.contains("Date") ) {
 				System.out.println("Key-Value-Pair::" + key + ":" + value);
 				//sb.append("Key-Value-Pair::" + key + ":" + value+"\r\n");
 				
 				strBirthDateNo = strBirthDateNo.substring(6, strBirthDateNo.length()-2); //get birthday string-epoch type
-				System.out.println("strBirthDateNo--> " + strBirthDateNo);
-				
-				//native account & 1970/1/15 or 1970/1/16
+				//System.out.println("strBirthDateNo--> " + strBirthDateNo);			
 				try{
 					LnEpoBDOld = Long.valueOf(strBirthDateNo);
 					//System.out.println("strEpoBDOld--> " + LnEpoBDOld);
 				}
-				catch (Exception e){					
-				}
+				catch (Exception e){	}
 				//------
 				int intPropertyV = 999; //default intPropertyV 
 				
 				if (strProperty != null){					
 					try {
 						intPropertyV = Integer.valueOf(strProperty);
-						System.out.println("intPropertyV--> " + intPropertyV);
+						//System.out.println("intPropertyV--> " + intPropertyV);
 					}
 					catch (Exception e){
 						strProperty = null;
 					}
 				}
 				
+				//native account & 1970/1/15 or 1970/1/16-Rule3 remove
 	            if ( 1209599000 < LnEpoBDOld &&  LnEpoBDOld < 138240000 && strProperty==null){
 	            		strNYear=null;
 	            		System.out.println("Rule3, Property null & birthday 1970 " );
@@ -133,7 +125,7 @@ public class Rmet4 {
 	            }                
 	            else {
 	            		strNYear = parseEpochTime(LnEpoBDOld);
-			        System.out.println("BirthYEAR String--> " + strNYear);
+			        //System.out.println("BirthYEAR String--> " + strNYear);
 		            //System.out.println("New BirthDate Number --> " + NewstrBirthDateNo);           
 	            }
         			myjson.remove("DateOfBirth");
@@ -142,7 +134,7 @@ public class Rmet4 {
         	            sb_nh.append("Rule4, not match--> " + myjson+"\r\n");
         			}
             		myjson.put("YearOfBirth", strNYear);
-	            System.out.println("New Value String--> " + myjson);
+	            System.out.println("New Value String-----> " + myjson);
 	            //sb.append("New Value String--> " + myjson+"\r\n");
 	            
 	            //write back to VDM   
@@ -155,14 +147,15 @@ public class Rmet4 {
 	            }*/
 	            ///
 	            count = count +1;
-	            System.out.println(count);   
+	            System.out.println("count: "+count);
+	            System.out.println("<================================> ");
 	            //sb.append("count--> " + count+"\r\n");
 	            sb_nh.append("==================================" +"\r\n");      
 				}//if birthday contains 'Date' handle
 			
 			else if (strBirthDateNo!=null){
-				System.out.println("Rules2, SKIP, Key-Value-Pair::" + key + ":" + value);
-				sb_nh.append("Rule2 SKIP, Key-Value-Pair::" + key + ":" + value+"\r\n");
+				System.out.println("Rules2--SKIP but log, Key-Value-Pair::" + key + ":" + value);
+				sb_nh.append("Rule2--SKIP but log, Key-Value-Pair::" + key + ":" + value+"\r\n");
 				myjson.remove("DateOfBirth");
 				//write back to VDM
 				/*
