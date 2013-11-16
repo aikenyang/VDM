@@ -131,40 +131,43 @@ public class Rmet3 {
         			myjson.remove("DateOfBirth");
         			if (strBirthYear!=null && strNYear!=strBirthYear){
         				System.out.println("Rule4, not match--> " + myjson);
-        	            sb_nh.append("Rule4, not match--> " + myjson+"\r\n");
+        	            sb_nh.append("Rule4, birthday year not match \r\n");
+        	            sb_nh.append("Key-Value-Pair::" + key + ":" + value+"\r\n");
+        	            sb_nh.append("====================================================\r\n");
         			}
             		myjson.put("YearOfBirth", strNYear);
 	            System.out.println("New Value String-----> " + myjson);
 	            //sb.append("New Value String--> " + myjson+"\r\n");
 	            
 	            //write back to VDM   
-	            /*    /     
+	                
 	            try {
 	            		client.put(key, myjson.toString());
 	            }catch (Exception e){
 	            		System.out.println("!!exception to put in VDM--> " + myjson);
-	            		sb.append("!!exception to put in VDM--> " + myjson+"\r\n");
-	            }*/
+	            		//sb.append("!!exception to put in VDM--> " + myjson+"\r\n");
+	            }
 	            ///
 	            count = count +1;
 	            System.out.println("count: "+count);
 	            System.out.println("<================================> ");
-	            //sb.append("count--> " + count+"\r\n");
-	            sb_nh.append("==================================" +"\r\n");      
+	            //sb.append("count--> " + count+"\r\n");    
 				}//if birthday contains 'Date' handle
 			
 			else if (strBirthDateNo!=null){
-				System.out.println("Rules2--SKIP but log, Key-Value-Pair::" + key + ":" + value);
-				sb_nh.append("Rule2--SKIP but log, Key-Value-Pair::" + key + ":" + value+"\r\n");
+				System.out.println("Rules2--birthday noise remove & log, Key-Value-Pair::" + key + ":" + value);
+				sb_nh.append("Rule2--birthday noise remove & log\r\n");
+				sb_nh.append("Key-Value-Pair::" + key + ":" + value+"\r\n");
+				sb_nh.append("====================================================\r\n");
 				myjson.remove("DateOfBirth");
 				//write back to VDM
-				/*
+				
 	            try {
 		        		client.put(key, myjson.toString());
 		        }catch (Exception e){
 		        		System.out.println("!!exception to put in VDM--> " + myjson);
-		        		sb.append("!!exception to put in VDM--> " + myjson+"\r\n");
-		        }*/
+		        		//sb.append("!!exception to put in VDM--> " + myjson+"\r\n");
+		        }
 			}
 			
 
