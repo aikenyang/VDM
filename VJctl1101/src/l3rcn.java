@@ -63,6 +63,7 @@ public class l3rcn {
             strBirthDateNo = null; //default
             strProperty = null;	  //default
             JSONObject myjson = null;
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy"); //parse the Epoch string to Date
             
             try {
             		myjson = new JSONObject(value);
@@ -135,10 +136,18 @@ public class l3rcn {
 	            		System.out.println("Property 0 & birthday 1970 " );
 	            }	            
 	            else {
-		            strBirthYear = parseEpochTime( strBirthDateNo );
-		            System.out.println("BirthYEAR String--> " + strBirthYear); 
-		            NewstrBirthDateNo = toEpochTime( strBirthYear);
-		            System.out.println("New BirthDate Number --> " + NewstrBirthDateNo);
+		            //strBirthYear = parseEpochTime( strBirthDateNo );
+	            	try{
+	            		strBirthYear = formatter.format(LnEpoBDOld); //change another way to parse Epoch
+			           System.out.println("BirthYEAR String--> " + strBirthYear);
+	            	}catch(Exception e){
+	            		
+	            	}
+		            
+		            
+		            //NewstrBirthDateNo = toEpochTime( strBirthYear);
+		            //NewstrBirthDateNo = formatter.format(strBirthYear); 
+		            //System.out.println("New BirthDate Number --> " + NewstrBirthDateNo);
 		            
 		            //System.out.println("Key-Value-Pair::" + key + ":" + value);
 		            //sb.append("Key-Value-Pair::" + key + ":" + value+"\r\n");     
@@ -151,7 +160,7 @@ public class l3rcn {
 	            }
 	            else {
 	            		myjson.remove("DateOfBirth");
-	            		myjson.put("YearOfBirth", NewstrBirthDateNo);
+	            		myjson.put("YearOfBirth", strBirthYear);
 		            //NewFirstP = value.toString().substring(0, intFirst).replace("DateOfBirth", "YearOfBirth");
 	            		//newValue = NewFirstP + NewstrBirthDateNo + value.toString().substring(intLast) ;
 		            System.out.println("New Value String--> " + myjson);	
@@ -179,7 +188,7 @@ public class l3rcn {
 			
 		}
 	}
-	
+	/*
    private static String parseEpochTime( String strEpochString ) {
         try {
         		//Integer intES = strEpochString.length();
@@ -209,9 +218,9 @@ public class l3rcn {
             return strFormatted;   	
         }
 	}
-    
+    */
 
-    
+    /*
     private static String toEpochTime(String strDateTime)
     {
     		DateFormat df = new SimpleDateFormat("MM dd yyyy HH:mm:ss");
@@ -228,6 +237,6 @@ public class l3rcn {
 		long epoch = date.getTime();
         //System.out.println("epoch"+epoch/1000); // 1055545912454
         return Long.toString(epoch/1000);
-    }
+    }*/
 
 }

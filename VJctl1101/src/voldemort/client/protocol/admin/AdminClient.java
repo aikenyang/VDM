@@ -3045,34 +3045,4 @@ public class AdminClient {
 
         }
     }
-
-    
-    
-    /*
-     * add by Kenneth Yang
-     * 
-     * 
-     * 
-     
-	public Iterator<ByteArray> fetchKeys(int nodeId, 
-										String storeName,
-										List<Integer> partitionList) {
-		// TODO Auto-generated method stub
-		//return null;
-		return fetchKeys(nodeId, storeName, partitionList);
-		
-	}
-	*/
-    
-    /*
-    public Iterator<ByteArray> fetchKeys(int nodeId,
-            							String storeName,
-            							List<Integer> partitionList,
-            							Object object ,
-            							boolean fetchMasterEntries) {
-    	return fetchKeys(nodeId, storeName, partitionList, object, fetchMasterEntries);
-    }
-    */
-	
-	
 }

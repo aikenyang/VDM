@@ -127,12 +127,14 @@ public class Rmet3 {
 	            sb.append("New Value String--> " + myjson+"\r\n");
 	            
 	            //write back to VDM
+	            /*
 	            try {
 	            		client.put(key, myjson.toString());
 	            }catch (Exception e){
 	            		System.out.println("!!exception to put in VDM--> " + myjson);
 	            		sb.append("!!exception to put in VDM--> " + myjson+"\r\n");
 	            }
+	            */
 	            ///
 	            count = count +1;
 	            System.out.println(count);   
