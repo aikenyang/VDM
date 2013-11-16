@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
+
 //import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,7 +14,7 @@ import voldemort.client.protocol.admin.*;
 import voldemort.client.protocol.admin.filter.DefaultVoldemortFilter;
 import voldemort.client.protocol.VoldemortFilter;
 import voldemort.utils.ByteArray;
-//import voldemort.versioning.Versioned;
+import voldemort.versioning.Versioned;
 
 public class Rmet2 {
 	public static void main(String[] args) {
@@ -44,8 +45,8 @@ public class Rmet2 {
         /////////////////above is vdm connection information
        
         String key = null;
-        String value = null;
-        //Versioned value = null;
+        String sValue = null;
+        Versioned<String> vValue = null;
         
         //StringBuilder sb = new StringBuilder(); 		//records processed
         StringBuilder sb_nh = new StringBuilder(); 	//records skiped
@@ -62,14 +63,16 @@ public class Rmet2 {
         
         while (iterator.hasNext()) {
             key = new String(iterator.next().get());
-            value = client.getValue(key);
+            vValue = client.get(key);
+            sValue = client.getValue(key);
+            
             strBirthDateNo = null; //default, reset in every loop
             strProperty = null;	  //default, reset in every loop
             strBirthYear = null;	  //default, reset in every loop
             JSONObject myjson = null;
             
             try {
-            		myjson = new JSONObject(value);
+            		myjson = new JSONObject(sValue);
                 try{
             			strBirthDateNo = myjson.getString("DateOfBirth");
             			//System.out.println("Birthday String--> " + strBirthDateNo);
@@ -87,7 +90,7 @@ public class Rmet2 {
             } catch (JSONException e) {}
    
 			if (strBirthDateNo!=null && strBirthDateNo.contains("Date") ) {
-				System.out.println("Key-Value-Pair::" + key + ":" + value);
+				System.out.println("Key-Value-Pair::" + key + ":" + sValue);
 				//sb.append("Key-Value-Pair::" + key + ":" + value+"\r\n");
 				
 				strBirthDateNo = strBirthDateNo.substring(6, strBirthDateNo.length()-2); //get birthday string-epoch type
@@ -132,7 +135,7 @@ public class Rmet2 {
         			if (strBirthYear!=null && strNYear!=strBirthYear){
         				System.out.println("Rule4, not match--> " + myjson);
         	            sb_nh.append("Rule4, birthday year not match \r\n");
-        	            sb_nh.append("Key-Value-Pair::" + key + ":" + value+"\r\n");
+        	            sb_nh.append("Key-Value-Pair::" + key + ":" + sValue+"\r\n");
         	            sb_nh.append("====================================================\r\n");
         			}
             		myjson.put("YearOfBirth", strNYear);
@@ -142,7 +145,8 @@ public class Rmet2 {
 	            //write back to VDM   
 	                
 	            try {
-	            		client.put(key, myjson.toString());
+	            		vValue.setObject(myjson.toString());
+	            		client.put(key, vValue);
 	            }catch (Exception e){
 	            		System.out.println("!!exception to put in VDM--> " + myjson);
 	            		//sb.append("!!exception to put in VDM--> " + myjson+"\r\n");
@@ -155,15 +159,17 @@ public class Rmet2 {
 				}//if birthday contains 'Date' handle
 			
 			else if (strBirthDateNo!=null){
-				System.out.println("Rules2--birthday noise remove & log, Key-Value-Pair::" + key + ":" + value);
+				System.out.println("Rules2--birthday noise remove & log, Key-Value-Pair::" + key + ":" + sValue);
 				sb_nh.append("Rule2--birthday noise remove & log\r\n");
-				sb_nh.append("Key-Value-Pair::" + key + ":" + value+"\r\n");
+				sb_nh.append("Key-Value-Pair::" + key + ":" + sValue+"\r\n");
 				sb_nh.append("====================================================\r\n");
 				myjson.remove("DateOfBirth");
+				
 				//write back to VDM
 				
 	            try {
-		        		client.put(key, myjson.toString());
+	            		vValue.setObject(myjson.toString());
+	            		client.put(key, vValue);
 		        }catch (Exception e){
 		        		System.out.println("!!exception to put in VDM--> " + myjson);
 		        		//sb.append("!!exception to put in VDM--> " + myjson+"\r\n");
